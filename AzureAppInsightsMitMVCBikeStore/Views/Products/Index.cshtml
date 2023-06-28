@@ -128,15 +128,14 @@
                             var prefix = Html.Raw(productName.Substring(0, startIndex));
                             var highlighted = Html.Raw(productName.Substring(startIndex, filter.Length));
                             var suffix = Html.Raw(productName.Substring(endIndex));
-                            @prefix
 
-                            <strong>@highlighted</strong>
-
-                            @suffix
+                            <span>@prefix</span>
+                            <strong><a asp-controller="Products" asp-action="Details" asp-route-id="@item.Product.ProductId">@highlighted</a></strong>
+                            <span>@suffix</span>
                         }
                         else
                         {
-                            @Html.DisplayFor(modelItem => item.Product.ProductName)
+                            <strong><a asp-controller="Products" asp-action="Details" asp-route-id="@item.Product.ProductId">@productName</a></strong>
                         }
                     }
                 </td>
@@ -155,13 +154,11 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.TotalQuantity)
                 </td>
-                @*<td>
-            <a asp-action="Edit" asp-route-id="@item.Product.ProductId">Edit</a> |
-            <a asp-action="Details" asp-route-id="@item.Product.ProductId">Details</a> |
-            <a asp-action="Delete" asp-route-id="@item.Product.ProductId">Delete</a>
-            </td>*@
             </tr>
         }
+
+
+
     </tbody>
 </table>
 
