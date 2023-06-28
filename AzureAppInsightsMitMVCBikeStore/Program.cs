@@ -17,7 +17,6 @@ namespace AzureAppInsightsMitMVCBikeStore
 
             builder.Services.AddDbContext<BikeStoresContext>(options => options.UseLazyLoadingProxies().
             UseSqlServer(builder.Configuration.GetConnectionString("MeineDatenbank")));
-            //Kommentartest
 
 
             var app = builder.Build();
