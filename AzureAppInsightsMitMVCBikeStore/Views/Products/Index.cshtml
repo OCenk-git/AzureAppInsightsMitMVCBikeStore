@@ -1,0 +1,213 @@
+﻿@model PaginatedList<AzureAppInsightsMitMVCBikeStore.Models.ProductViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Bike Store</h1>
+
+@*<p>
+    <a asp-action="Create">Create New</a>
+</p>*@
+
+@using (Html.BeginForm("Index", "Products", FormMethod.Get))
+{
+    <p>
+        Suche im Produktnamen: <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" />
+        <input type="submit" value="Search" />
+    </p>
+}
+
+<style>
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .pagination .btn {
+        margin-right: 5px;
+    }
+
+        .pagination .btn.selected {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .pagination .btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+</style>
+
+<div class="pagination-container">
+    <div class="pagination">
+        @{
+            int currentPage = Model.PageIndex;
+            int totalPages = Model.TotalPages;
+            int startPage = Math.Max(1, currentPage - 1);
+            int endPage = Math.Min(startPage + 2, totalPages);
+            int previousPage = Math.Max(1, currentPage - 1);
+            int nextPage = Math.Min(totalPages, currentPage + 1);
+        }
+
+        <div class="text-center">
+            @if (Model.HasPreviousPage)
+            {
+                <a class="btn btn-primary" asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-page="@(previousPage)">&lt;</a>
+            }
+            else
+            {
+                <a class="btn btn-primary disabled">&lt;</a>
+            }
+
+            @for (var i = startPage; i <= endPage; i++)
+            {
+                if (i == currentPage)
+                {
+                    <a class="btn btn-primary selected">@i</a>
+                }
+                else
+                {
+                    <a class="btn btn-primary" asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-page="@i">@i</a>
+                }
+            }
+
+            @if (Model.HasNextPage)
+            {
+                <a class="btn btn-primary" asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-page="@nextPage">&gt;</a>
+            }
+            else
+            {
+                <a class="btn btn-primary disabled">&gt;</a>
+            }
+        </div>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">Bezeichnung</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["YearSortParm"]">Jahr</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["PriceSortParm"]">Preis</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["BrandSortParm"]">Hersteller</a>
+            </th>
+            @*<th>
+            @Html.DisplayNameFor(model => model.Category)
+            </th>*@
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["CategorySortParm"]">Kategorie</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["QuantitySortParm"]">Lagerbestand</a>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @{
+                        var productName = item.Product.ProductName;
+                        if (!String.IsNullOrEmpty(ViewData["CurrentFilter"] as string) && productName.Contains(ViewData["CurrentFilter"] as string))
+                        {
+                            var filter = (ViewData["CurrentFilter"] as string).ToLower();
+                            var startIndex = productName.ToLower().IndexOf(filter);
+                            var endIndex = startIndex + filter.Length;
+                            var prefix = Html.Raw(productName.Substring(0, startIndex));
+                            var highlighted = Html.Raw(productName.Substring(startIndex, filter.Length));
+                            var suffix = Html.Raw(productName.Substring(endIndex));
+                            @prefix
+
+                            <strong>@highlighted</strong>
+
+                            @suffix
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(modelItem => item.Product.ProductName)
+                        }
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Product.ModelYear)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Product.ListPrice)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Brand.BrandName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Category.CategoryName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalQuantity)
+                </td>
+                @*<td>
+            <a asp-action="Edit" asp-route-id="@item.Product.ProductId">Edit</a> |
+            <a asp-action="Details" asp-route-id="@item.Product.ProductId">Details</a> |
+            <a asp-action="Delete" asp-route-id="@item.Product.ProductId">Delete</a>
+            </td>*@
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+
+<div class="pagination-container">
+    <div class="pagination">
+        @{
+            int currentPage2 = Model.PageIndex;
+            int totalPages2 = Model.TotalPages;
+            int startPage2 = Math.Max(1, currentPage2 - 1);
+            int endPage2 = Math.Min(startPage2 + 2, totalPages2);
+            int previousPage2 = Math.Max(1, currentPage2 - 1);
+            int nextPage2 = Math.Min(totalPages2, currentPage2 + 1);
+        }
+
+        <div class="text-center">
+            @if (Model.HasPreviousPage)
+            {
+                <a class="btn btn-primary" asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-page="@(previousPage2)">&lt;</a>
+            }
+            else
+            {
+                <a class="btn btn-primary disabled">&lt;</a>
+            }
+
+            @for (var i = startPage2; i <= endPage2; i++)
+            {
+                if (i == currentPage2)
+                {
+                    <a class="btn btn-primary selected">@i</a>
+                }
+                else
+                {
+                    <a class="btn btn-primary" asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-page="@i">@i</a>
+                }
+            }
+
+            @if (Model.HasNextPage)
+            {
+                <a class="btn btn-primary" asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-page="@nextPage2">&gt;</a>
+            }
+            else
+            {
+                <a class="btn btn-primary disabled">&gt;</a>
+            }
+        </div>
+    </div>
+</div>
